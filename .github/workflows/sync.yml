@@ -1,0 +1,40 @@
+name: Sync timetable
+
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch timetable snapshot
+        run: node .github/sync-schedule.mjs
+        env:
+          TEACHER_ID: '510'
+          DAYS: '16'
+          START_OFFSET: '-1'
+
+      - name: Commit & push snapshot
+        run: |
+          git config user.name "timetable-bot"
+          git config user.email "819024509@qq.com"
+          git add data/schedule.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update timetable snapshot $(date -u +%Y-%m-%dT%H:%MZ)"
+            git push
+          fi

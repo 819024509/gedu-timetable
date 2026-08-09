@@ -69,14 +69,15 @@
             const [exporting, setExporting] = useState(false);
             const [currentProgress, setCurrentProgress] = useState(0);
             const [error, setError] = useState(null);
-            const [proxyMode, setProxyMode] = useState('none'); // 'none', 'allorigins', 'plugin'
+            const [proxyMode, setProxyMode] = useState('snapshot'); // 'snapshot', 'none', 'allorigins'
+            const [snapshotInfo, setSnapshotInfo] = useState(null);
             const calendarRef = useRef(null);
             const containerRef = useRef(null);
 
             const parseEvent = (raw) => {
                 if (!raw.classTime) return null;
                 const [start, end] = raw.classTime.split('-');
-                const content = raw.content.replace(/<br>/g, '').split('\u00A0');
+                const content = raw.content.replace(/<br>/g, '').split(/&nbsp;|\u00A0/);
                 const title = content.length > 1 ? content[1] : raw.content;
                 if (title.includes('不排')) return null;
                 return {
@@ -91,10 +92,31 @@
             const handleCrawl = async () => {
                 setLoading(true);
                 setError(null);
-                setEvents([]); 
+                setEvents([]);
                 setCurrentProgress(0);
-                
+
                 try {
+                    if (proxyMode === 'snapshot') {
+                        const snapRes = await fetch('./data/schedule.json', { cache: 'no-cache' });
+                        if (!snapRes.ok) throw new Error('snapshot missing');
+                        const snap = await snapRes.json();
+                        const baseDate = new Date(startDate);
+                        const wanted = new Set();
+                        for (let i = 0; i < days; i++) {
+                            const d = new Date(baseDate);
+                            d.setDate(baseDate.getDate() + i);
+                            wanted.add(d.toISOString().split('T')[0]);
+                        }
+                        const filtered = (snap.events || []).filter(e => wanted.has(e.date));
+                        setEvents(filtered);
+                        setSnapshotInfo({ updatedAt: snap.updatedAt, teacherId: snap.teacherId });
+                        setCurrentProgress(days);
+                        if (teacherId !== snap.teacherId) {
+                            setError(`当前快照只同步了教师 ${snap.teacherId} 的课表。如需其他教师，请在仓库 Actions 的 “Sync timetable” 里配置 TEACHER_ID 后重新运行。`);
+                        }
+                        return;
+                    }
+
                     const baseDate = new Date(startDate);
                     for (let i = 0; i < days; i++) {
                         setCurrentProgress(i + 1);
@@ -127,7 +149,9 @@
                         }
                     }
                 } catch (err) {
-                    if (proxyMode === 'none') {
+                    if (proxyMode === 'snapshot') {
+                        setError("自动同步数据尚未生成。请到仓库 Actions 页面手动运行一次 “Sync timetable”，或等待定时同步完成。");
+                    } else if (proxyMode === 'none') {
                         setError("请求被浏览器拦截 (CORS)。请尝试在下方开启“国内免翻代理”或在浏览器安装“Allow CORS”插件。");
                     } else {
                         setError("请求失败。可能是代理服务器响应缓慢或教师ID错误。");
@@ -340,17 +364,26 @@
                                     </div>
                                     
                                     <div className="p-3 bg-slate-50 rounded-2xl space-y-2 border border-slate-100">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase mb-2">连接方式 (跨域解决)</p>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase mb-2">数据来源</p>
                                         <div className="space-y-1">
+                                            <label className="flex items-center gap-2 text-[11px] font-bold cursor-pointer text-emerald-600">
+                                                <input type="radio" checked={proxyMode === 'snapshot'} onChange={() => setProxyMode('snapshot')} />
+                                                GitHub 自动同步 (免 CORS)
+                                            </label>
                                             <label className="flex items-center gap-2 text-[11px] font-bold cursor-pointer">
-                                                <input type="radio" checked={proxyMode === 'none'} onChange={() => setProxyMode('none')} /> 
+                                                <input type="radio" checked={proxyMode === 'none'} onChange={() => setProxyMode('none')} />
                                                 直连 (需安装浏览器 CORS 插件)
                                             </label>
                                             <label className="flex items-center gap-2 text-[11px] font-bold cursor-pointer text-indigo-600">
-                                                <input type="radio" checked={proxyMode === 'allorigins'} onChange={() => setProxyMode('allorigins')} /> 
+                                                <input type="radio" checked={proxyMode === 'allorigins'} onChange={() => setProxyMode('allorigins')} />
                                                 国内免翻代理 (AllOrigins)
                                             </label>
                                         </div>
+                                        {proxyMode === 'snapshot' && snapshotInfo && (
+                                            <p className="pt-2 text-[10px] font-bold text-slate-400">
+                                                快照更新于 {new Date(snapshotInfo.updatedAt).toLocaleString('zh-CN')} · 教师 {snapshotInfo.teacherId}
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
 

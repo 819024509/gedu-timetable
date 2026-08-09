@@ -557,8 +557,8 @@
                                                     ? 'event-card absolute inset-x-1.5 rounded-2xl p-3 text-xs shadow-md border-l-4 border-slate-400 bg-slate-100 z-10 transition-all'
                                                     : 'event-card absolute inset-x-1.5 rounded-2xl p-3 text-xs shadow-md border-l-4 border-indigo-500 bg-white z-10 transition-all';
                                                 const titleClassName = isNonStat
-                                                    ? 'event-title font-black text-slate-500 leading-tight mb-1 truncate'
-                                                    : 'event-title font-black text-slate-900 leading-tight mb-1 truncate';
+                                                    ? 'event-title font-black text-slate-500 leading-tight mb-1 break-words'
+                                                    : 'event-title font-black text-slate-900 leading-tight mb-1 break-words';
                                                 const badgeClassName = isNonStat
                                                     ? 'mt-2 text-[9px] font-bold uppercase text-slate-500 bg-slate-200 w-fit px-2 py-0.5 rounded-full'
                                                     : 'mt-2 text-[9px] font-bold uppercase text-indigo-600 bg-indigo-50 w-fit px-2 py-0.5 rounded-full';
@@ -577,9 +577,6 @@
                                                                 说明项
                                                             </div>
                                                         )}
-                                                        <div className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                                                            <Icon name="clock" size="sm" /> {event.start} - {event.end}
-                                                        </div>
                                                         <div className={badgeClassName}>
                                                             {event.teacher}
                                                         </div>

@@ -63,7 +63,7 @@
         function App() {
             const [teacherId, setTeacherId] = useState('510');
             const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-            const [days, setDays] = useState(3);
+            const [days, setDays] = useState(15);
             const [events, setEvents] = useState([]);
             const [loading, setLoading] = useState(false);
             const [exporting, setExporting] = useState(false);
@@ -331,22 +331,22 @@
 
             return (
                 <div className="min-h-screen flex flex-col text-slate-800">
-                    <header className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between shadow-sm">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-indigo-600 p-2 rounded-xl shadow-lg flex items-center justify-center">
+                    <header className="bg-white border-b border-slate-200 px-4 sm:px-8 py-4 flex items-center justify-between gap-3 shadow-sm">
+                        <div className="flex items-center gap-3 min-w-0">
+                            <div className="bg-indigo-600 p-2 rounded-xl shadow-lg flex items-center justify-center shrink-0">
                                 <Icon name="calendar" className="text-white" />
                             </div>
-                            <h1 className="text-xl font-extrabold tracking-tight text-slate-900">GEDU 课表专家</h1>
+                            <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 whitespace-nowrap">GEDU 课表专家</h1>
                         </div>
-                        <div className="flex items-center gap-2 text-xs font-bold text-slate-400 bg-slate-100 px-4 py-2 rounded-full">
-                            <span className={`w-2 h-2 rounded-full ${loading ? 'bg-amber-500 animate-pulse' : 'bg-green-500'}`}></span> 
+                        <div className="flex items-center gap-2 text-[11px] sm:text-xs font-bold text-slate-400 bg-slate-100 px-3 sm:px-4 py-2 rounded-full shrink-0">
+                            <span className={`w-2 h-2 rounded-full ${loading ? 'bg-amber-500 animate-pulse' : 'bg-green-500'}`}></span>
                             {loading ? `采集进度: ${currentProgress}/${days}` : '系统在线'}
                         </div>
                     </header>
 
-                    <main className="flex-1 flex flex-col lg:flex-row p-6 gap-6 overflow-hidden">
-                        <aside className="w-full lg:w-80 space-y-4">
-                            <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-6">
+                    <main className="flex-1 flex flex-col lg:flex-row p-3 sm:p-6 gap-3 sm:gap-6 overflow-hidden">
+                        <aside className="w-full lg:w-80 space-y-3 sm:space-y-4">
+                            <div className="bg-white p-4 sm:p-6 rounded-3xl shadow-sm border border-slate-200 space-y-6">
                                 <div className="space-y-4">
                                     <div>
                                         <label className="text-xs font-bold text-slate-500 mb-2 block uppercase tracking-tighter">教师 ID</label>
@@ -404,7 +404,7 @@
 
                             {/* 上课时长统计区域 */}
                             {events.length > 0 && (
-                                <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-4">
+                                <div className="bg-white p-4 sm:p-6 rounded-3xl shadow-sm border border-slate-200 space-y-4">
                                     <div className="flex items-center gap-2 mb-4">
                                         <Icon name="bar-chart-3" className="text-indigo-600" />
                                         <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight">上课时长统计</h2>
@@ -515,7 +515,7 @@
 
                         </aside>
 
-                        <section ref={containerRef} className="flex-1 overflow-auto rounded-3xl border border-slate-200 bg-white shadow-sm flex flex-col max-h-[calc(100vh-160px)]">
+                        <section ref={containerRef} className="flex-1 overflow-auto rounded-3xl border border-slate-200 bg-white shadow-sm flex flex-col h-[72dvh] lg:h-auto lg:max-h-[calc(100vh-160px)]">
                             <div ref={calendarRef} className="calendar-grid min-w-[900px] flex-1 bg-white relative" style={{"--days": days}}>
                                 <div className="h-16 bg-slate-50 border-b border-r border-slate-200 flex items-center justify-center sticky top-0 z-30">
                                     <Icon name="clock" className="text-slate-300" />

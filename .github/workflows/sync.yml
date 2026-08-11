@@ -24,8 +24,7 @@ jobs:
         run: node .github/sync-schedule.mjs
         env:
           TEACHER_ID: '510'
-          DAYS: '30'
-          START_OFFSET: '0'
+          EXTRA_DAYS: '15'
 
       - name: Commit & push snapshot
         run: |

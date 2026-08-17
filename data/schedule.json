@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-08-17T15:48:38.024Z",
+  "updatedAt": "2026-08-17T16:20:27.020Z",
   "teacherId": "510",
   "startDate": "2026-08-01",
-  "endDate": "2026-09-01",
-  "days": 32,
+  "endDate": "2026-09-02",
+  "days": 33,
   "events": [
     {
       "date": "2026-08-03",
